@@ -1,0 +1,11 @@
+@import "~src/sass/variables";
+@import "~src/sass/mixins";
+
+.card{
+  width: 50%;
+  height: fit-content;
+  padding: 10%;
+  box-shadow: 0 10px 10px rgba(0, 0, 0, 0.25);
+  background: white;
+  display: flex;
+}
