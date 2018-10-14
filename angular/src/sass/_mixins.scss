@@ -228,22 +228,66 @@ $break-large: 1024px;
 .form-wrapper {
   display: flex;
   flex-direction: column;
+  .ng-valid[required], .ng-valid.required  {
+    border-left: 5px solid #42A948; /* green */
+  }
+  //.ng-invalid[required], .ng-invalid.required  {
+  //    box-shadow: none !important;
+  //    -webkit-box-shadow: none !important;
+  //}
+
+
+  .ng-valid {
+    border-left: 5px solid #42A948; /* green */
+  }
+  .ng-invalid{
+    box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+  }
   @include epic-sides() {background: inherit;}
   span {
     position: relative;
     display: inline-block;
-    margin: 1.2em 10px;
+    margin: 2.3em 0 0 0;
   }
 }
 
+.alert{
+  align-self: end;
+  padding: 5px;
+  margin-top: 5px;
+  font-size: smaller;
+  background-color: get-color(subtle);
+  color: get-color(lighter);
+  border-radius: 5px;
+}
+//.ng-valid[required], .ng-valid.required  {
+//  border-left: 5px solid #42A948; /* green */
+//}
+////.ng-invalid[required], .ng-invalid.required  {
+////    box-shadow: none !important;
+////    -webkit-box-shadow: none !important;
+////}
+//
+//
+//.ng-valid {
+//  border-left: 5px solid #42A948; /* green */
+//}
+//.ng-invalid{
+//  box-shadow: none !important;
+//  -webkit-box-shadow: none !important;
+//}
+
+.ng-invalid:not(form)  {
+  border-left: 5px solid #a94442; /* red */
+}
 .balloon {
-  // As suggested by https://twitter.com/dbox/status/365888496486985728
   display: inline-block;
   width: 300px;
   padding: 10px 0 10px 15px;
   font-family: $font-opensans;
   font-weight: 400;
-  color: get-color(primary);
+  color: get-color(highlight);
   background: get-color(highlight);
   border: 0;
   border-radius: 3px;
@@ -290,7 +334,7 @@ $break-large: 1024px;
 }
 .balloon:focus,
 .balloon:active {
-  color: #377D6A;
+  color: get-color(primary);
   text-indent: 0;
   background: get-color(subtle);
 
@@ -300,11 +344,11 @@ $break-large: 1024px;
   + label {
     color: #fff;
     text-shadow: 0 1px 0 rgba(19,74,70,.4);
-    background: rgba(122,184,147,1);
+    background: rgb(5, 87, 184);
     transform: translateY(-40px);
 
     &:after {
-      border-top: 4px solid rgba(122,184,147,1);
+      border-top: 4px solid rgb(5, 87, 184);
     }
   }
 }

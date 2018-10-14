@@ -1,56 +1,83 @@
-<div class="form-container">
-    <!--<label>Password</label>&ndash;&gt;-->
-    <!--<input id="name"-->
-           <!--name="name"-->
-           <!--required minlength="4"-->
-           <!--type="password"-->
-           <!--[(ngModel)]="user.password"-->
-           <!--#name="ngModel">-->
-    <!--<div *ngIf="name.invalid && (name.dirty || name.touched)">-->
-
-      <!--<span *ngIf="name.errors.required">-->
-        <!--Password is required.-->
-      <!--</span>-->
-      <!--<span *ngIf="name.errors.minlength">-->
-        <!--Password must be at least 4 characters long.-->
-      <!--</span>-->
-    <!--</div>-->
-    <div>
-      <label>Name</label>
-      <input type="text" [(ngModel)]="user.name" name="name">
-    </div>
-    <div>
-      <label>Username</label>
-      <input type="text" [(ngModel)]="user.username" name="username">
-    </div>
-    <div>
-      <label>Email</label>
-      <input type="text" [(ngModel)]="user.email" name="email">
-    </div>
-    <div>
-      <label>Password</label>
-      <input type="password" [(ngModel)]="user.password" name="password">
-    </div>
-    <div>
-      <label>Confirm password</label>
-      <input type="password" [(ngModel)]="confirmationPassword" name="confirm-password">
-    </div>
-    <input type="submit" (click)="onRegisterSubmit(user)">
-</div>
-
 <div class="card">
   <div class="form-wrapper">
     <span>
-      <input class="balloon" id="username" type="text" placeholder="Field requierd. " /><label for="username">Username</label>
+      <input
+        class="balloon" id="email" [(ngModel)]="user.email"
+        #email="ngModel" type="email" placeholder="example@example.com"
+        required email
+      /><label for="email">Email</label>
     </span>
+    <div *ngIf="email.invalid && (email.dirty || email.touched)" class="alert">
+      <div *ngIf="email.errors.required">
+        Email is required.
+      </div>
+      <div *ngIf="email.errors.email">
+        Wrong email format.
+      </div>
+    </div>
     <span>
-      <input class="balloon" id="name" type="text" placeholder="Milky Way?" /><label for="name">Last name & Name</label>
+      <input
+        class="balloon" id="password" [(ngModel)]="user.password"
+        #password="ngModel" type="password" placeholder=""
+        required minlength="6"
+      /><label for="password">Password</label>
     </span>
+    <div *ngIf="password.invalid && (password.dirty || password.touched)" class="alert">
+      <div *ngIf="password.errors.required">
+        Password is required.
+      </div>
+      <div *ngIf="password.errors.minlength">
+        Password must be at least 6 characters long.
+      </div>
+    </div>
     <span>
-      <input class="balloon" id="galaxy" type="text" placeholder="Milky Way?" /><label for="galaxy">Galaxy</label>
+      <input
+        class="balloon" id="confirmation" [(ngModel)]="confirmationPassword"
+        #confirmation="ngModel" type="password" placeholder=""
+        required minlength="6"
+      /><label for="confirmation">Confirmation Password</label>
     </span>
+    <div *ngIf="confirmation.invalid && (confirmation.dirty || confirmation.touched)" class="alert">
+      <div *ngIf="confirmation.errors.required">
+        Confirmation password is required.
+      </div>
+    </div>
+    <div *ngIf="(password.value !== confirmation.value) && (confirmation.dirty || confirmation.touched)" class="alert">
+      <div>Passwords doesn't match.</div>
+    </div>
     <span>
-      <input class="balloon" id="galaxy" type="text" placeholder="Milky Way?" /><label for="galaxy">Galaxy</label>
+      <input
+        class="balloon"
+        id="username"
+        [(ngModel)]="user.username"
+        #username="ngModel"
+        type="text"
+        placeholder="Field requierd."
+        required
+        minlength="4"
+      /><label for="username">Username</label>
     </span>
+    <div *ngIf="username.invalid && (username.dirty || username.touched)" class="alert">
+      <div *ngIf="username.errors.required">
+        Username is required.
+      </div>
+      <div *ngIf="username.errors.minlength">
+        Username must be at least 4 characters long.
+      </div>
+    </div>
+    <span>
+      <input
+        class="balloon" id="name"
+        type="text" placeholder="Jhon Doe"
+        [(ngModel)]="user.name"
+        #name="ngModel" required
+      /><label for="name">Last name & Name</label>
+    </span>
+    <div *ngIf="name.invalid && (name.dirty || name.touched)" class="alert">
+      <div *ngIf="name.errors.required">
+        Name is required.
+      </div>
+    </div>
+
   </div>
 </div>

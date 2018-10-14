@@ -10,6 +10,7 @@ $colors: (
   secondary: white,
   subtle: #e2e2e2,
   highlight: #d1d1d1,
+  danger: #ff1627
 );
 
 @function get-color($color-name){
