@@ -195,15 +195,10 @@ $break-large: 1024px;
 // }
 
 // .apple { @include borderbutton($color:#FF4136, $border: 1px); }
-// .bigblue { @include borderbutton($color:#FF851B, $border: 1px); }
-// .ibm { @include borderbutton($color:#11b1ff, $border: 1px); }
-// .macintosh { @include borderbutton($color:#b3c833, $border: 1px); }
+
 
 // .halt { @include button(#00a1cb);  }
-// .and { @include button(#7db500); }
-// .catch { @include button(#f18d05); }
-// .fire { @include button(#e54028); }
-// .go { @include button(#87318c);}
+
 
 
 // Input mixin
@@ -228,22 +223,7 @@ $break-large: 1024px;
 .form-wrapper {
   display: flex;
   flex-direction: column;
-  .ng-valid[required], .ng-valid.required  {
-    border-left: 5px solid #42A948; /* green */
-  }
-  //.ng-invalid[required], .ng-invalid.required  {
-  //    box-shadow: none !important;
-  //    -webkit-box-shadow: none !important;
-  //}
-
-
-  .ng-valid {
-    border-left: 5px solid #42A948; /* green */
-  }
-  .ng-invalid{
-    box-shadow: none !important;
-    -webkit-box-shadow: none !important;
-  }
+  @extend %hide-invalidcss-input;
   @include epic-sides() {background: inherit;}
   span {
     position: relative;
@@ -261,26 +241,25 @@ $break-large: 1024px;
   color: get-color(lighter);
   border-radius: 5px;
 }
-//.ng-valid[required], .ng-valid.required  {
-//  border-left: 5px solid #42A948; /* green */
-//}
-////.ng-invalid[required], .ng-invalid.required  {
-////    box-shadow: none !important;
-////    -webkit-box-shadow: none !important;
-////}
-//
-//
-//.ng-valid {
-//  border-left: 5px solid #42A948; /* green */
-//}
-//.ng-invalid{
-//  box-shadow: none !important;
-//  -webkit-box-shadow: none !important;
-//}
+%hide-invalidcss-input{
+  .ng-valid[required], .ng-valid.required  {
+    border-left: 5px solid #42A948; /* green */
+  }
 
-.ng-invalid:not(form)  {
-  border-left: 5px solid #a94442; /* red */
+  .ng-valid {
+    border-left: 5px solid #42A948; /* green */
+  }
+  .ng-invalid{
+    box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+  }
+  .ng-invalid:not(form)  {
+    border-left: 5px solid #a94442; /* red */
+  }
 }
+
+
+
 .balloon {
   display: inline-block;
   width: 300px;
@@ -308,7 +287,7 @@ $break-large: 1024px;
     left: 0;
     bottom: 8px;
     padding: 5px 15px;
-    color: white;
+    color: get-color(primary);
     font-size: 12px;
     font-weight: 700;
     text-transform: uppercase;
