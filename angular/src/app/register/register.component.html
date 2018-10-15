@@ -44,7 +44,7 @@
       <label for="confirmation">Confirmation Password</label>
   </span>
     <div *ngIf="confirmation.invalid && (confirmation.dirty || confirmation.touched)" class="alert">
-      <div *ngIf="confirmation.errors.required">
+      <div *ngIf="confirmation.errors">
         Confirmation password is required.
       </div>
     </div>

@@ -1,14 +1,12 @@
-import {userError} from "@angular/compiler-cli/src/transformers/util";
-
 export class User {
-  id: string;
+  _id: string;
   name: string;
   username: string;
   email: string;
   password: string;
 
   constructor() {
-    this.id = undefined;
+    this._id = undefined;
     this.name = undefined;
     this.password = undefined;
     this.username = undefined;

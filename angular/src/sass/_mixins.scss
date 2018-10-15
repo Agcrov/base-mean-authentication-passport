@@ -233,28 +233,28 @@ $break-large: 1024px;
 }
 
 .alert{
-  align-self: end;
+  align-self: flex-end;
   padding: 5px;
   margin-top: 5px;
   font-size: smaller;
-  background-color: get-color(subtle);
+  background-color: rgba(209, 209, 209, 0.52);
   color: get-color(lighter);
   border-radius: 5px;
 }
 %hide-invalidcss-input{
   .ng-valid[required], .ng-valid.required  {
-    border-left: 5px solid #42A948; /* green */
+    border-left: 5px solid #6da976; /* green */
   }
 
   .ng-valid {
-    border-left: 5px solid #42A948; /* green */
+    border-left: 5px solid #6da976; /* green */
   }
   .ng-invalid{
     box-shadow: none !important;
     -webkit-box-shadow: none !important;
   }
   .ng-invalid:not(form)  {
-    border-left: 5px solid #a94442; /* red */
+    border-left: 5px solid #a96c71; /* red */
   }
 }
 
@@ -266,8 +266,8 @@ $break-large: 1024px;
   padding: 10px 0 10px 15px;
   font-family: $font-opensans;
   font-weight: 400;
-  color: get-color(highlight);
-  background: get-color(highlight);
+  color: get-color(subtle);
+  background: get-color(subtle);
   border: 0;
   border-radius: 3px;
   outline: 0;
@@ -275,7 +275,7 @@ $break-large: 1024px;
   transition: all .3s ease-in-out;
 
   &::-webkit-input-placeholder {
-    color: get-color(highlight);
+    color: get-color(subtle);
     text-indent: 0;
     font-weight: 300;
   }
