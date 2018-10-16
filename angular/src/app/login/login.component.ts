@@ -19,8 +19,11 @@ export class LoginComponent implements OnInit {
   onLogin(): void{
     if (this.user.validateEmail() && this.user.password !== undefined){
       this.authService.authenticate(this.user.email,this.user.password).subscribe(res =>{
-        this.router.navigate(['/home']);
-        console.log('after response ');
+        if(res.success) {
+          this.router.navigate(['/home']);
+        } else {
+          console.log(res);
+        }
       });
 
 

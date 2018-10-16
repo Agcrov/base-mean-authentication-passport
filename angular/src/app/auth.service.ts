@@ -2,18 +2,18 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError, map, tap } from 'rxjs/operators';
 import {Observable, of} from 'rxjs';
-import {User} from "./user";
+import {User} from './user';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
 };
 
-interface registerResponse {
+interface RegisterResponse {
   success: boolean,
   message: string,
   user: User;
 }
-interface authenticateResponse {
+interface AuthenticateResponse {
   success: boolean,
   token: string,
   user: User;
@@ -23,27 +23,30 @@ interface authenticateResponse {
   providedIn: 'root'
 })
 export class AuthService {
-  url = 'http://localhost:8080/users/';
-  authToken: any;
-  user: User;
+  private url = 'http://localhost:8080/users/';
+  private authToken: any;
+  private user: User;
   constructor(private httpService: HttpClient) { }
 
-  register(user: User): Observable<registerResponse>{
-    if (user.validateUser()&&user.validateEmail()){
-      return this.httpService.post<registerResponse>(this.url + `register`,user, httpOptions );
-    }else{
-      //TODO: return some error handler
+  register(user: User): Observable<RegisterResponse>{
+    if (user.validateUser() && user.validateEmail()) {
+      return this.httpService.post<RegisterResponse>(this.url + `register`,user, httpOptions );
+    } else {
+      ///TODO: return some error handler
       console.log('User validation failed at registration process.');
     }
   }
-  authenticate(email: string, password: string): Observable<authenticateResponse>{
-    return this.httpService.post<authenticateResponse>(this.url+`authenticate`,{email: email, password: password},httpOptions).pipe(
-      tap(res =>{
-        if (res.success) 
+  authenticate(email: string, password: string): Observable<AuthenticateResponse>{
+    return this.httpService.post<AuthenticateResponse>(this.url + `authenticate`,{email: email, password: password},httpOptions).pipe(
+      tap(res => {
+        if (res.success)  {
         localStorage.setItem('id_token', res.token);
         localStorage.setItem('user', JSON.stringify(res.user));
         this.authToken = res.token;
         this.user = res.user;
+        } else {
+          console.log(res);
+        }
       })
     );
   }
@@ -52,6 +55,16 @@ export class AuthService {
     this.authToken = null;
     this.user = null;
     localStorage.clear();
+  }
+
+  getLocalToken(): void {
+    const token = localStorage.getItem('id_token');
+    if (token) {
+      console.log(token);
+      this.authToken = token;
+    } else {
+      this.authToken = undefined;
+    }
   }
   // private handleError<T> (operation = 'operation', result?: T) {
   //   return (error: any): Observable<T> => {

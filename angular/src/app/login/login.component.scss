@@ -24,6 +24,10 @@
     font-size: 2em;
     color: get-color(primary);
     align-self: center;
+    width: 100%;
+    border-bottom:  1px solid  get-color(lighter);
+    margin: 16px;
+    text-align: center;
   }
 }
 

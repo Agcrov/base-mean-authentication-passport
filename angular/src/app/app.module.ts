@@ -1,8 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from "@angular/common/http";
-
+import { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { FlashMessagesModule } from 'angular2-flash-messages';
 
@@ -13,8 +12,8 @@ import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 
-import {AuthService} from "./auth.service";
-import { NavBarComponent } from './nav-bar/nav-bar.component';
+import { ProfileComponent } from './profile/profile.component';
+
 
 @NgModule({
   declarations: [
@@ -23,7 +22,7 @@ import { NavBarComponent } from './nav-bar/nav-bar.component';
     MqIfDirective,
     LoginComponent,
     RegisterComponent,
-    NavBarComponent
+    ProfileComponent
   ],
   imports: [
     FormsModule,
@@ -32,7 +31,7 @@ import { NavBarComponent } from './nav-bar/nav-bar.component';
     HttpClientModule,
     FlashMessagesModule.forRoot()
   ],
-  providers: [AuthService],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
