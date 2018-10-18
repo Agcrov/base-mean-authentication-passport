@@ -1,9 +1,12 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
+
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError, map, tap } from 'rxjs/operators';
-import {Observable, of} from 'rxjs';
+import {Observable, of, Subject} from 'rxjs';
 import {User} from './user';
+import { JwtHelperService } from "@auth0/angular-jwt";
 
+const jwtHelper = new JwtHelperService();
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
 };
@@ -22,11 +25,25 @@ interface AuthenticateResponse {
 @Injectable({
   providedIn: 'root'
 })
-export class AuthService {
+export class AuthService implements  OnDestroy {
   private url = 'http://localhost:8080/users/';
-  private authToken: any;
+  private authToken = new Subject<string>();
+  isLoggedIn = new Subject<boolean>();
   private user: User;
-  constructor(private httpService: HttpClient) { }
+
+  constructor(private httpService: HttpClient) {
+    if(this.isLoggedIn){
+      this.logStatus = this.localToken;
+    } else {
+      this.isLoggedIn.next(false); // Just to initialize the logged in status, so the subscribers can get a value.
+    }
+  }
+  ngOnDestroy() {
+    this.isLoggedIn.complete();
+    this.isLoggedIn = undefined;
+    this.authToken.complete();
+    this.authToken = undefined;
+  }
 
   register(user: User): Observable<RegisterResponse>{
     if (user.validateUser() && user.validateEmail()) {
@@ -40,10 +57,10 @@ export class AuthService {
     return this.httpService.post<AuthenticateResponse>(this.url + `authenticate`,{email: email, password: password},httpOptions).pipe(
       tap(res => {
         if (res.success)  {
-        localStorage.setItem('id_token', res.token);
-        localStorage.setItem('user', JSON.stringify(res.user));
-        this.authToken = res.token;
-        this.user = res.user;
+          this.localToken = res.token;
+          this.logStatus = res.token;
+          localStorage.setItem('user', JSON.stringify(res.user));
+          this.user = res.user;
         } else {
           console.log(res);
         }
@@ -52,19 +69,19 @@ export class AuthService {
   }
 
   logOut(): void{
-    this.authToken = null;
+    this.isLoggedIn.next(false);
     this.user = null;
     localStorage.clear();
   }
-
-  getLocalToken(): void {
-    const token = localStorage.getItem('id_token');
-    if (token) {
-      console.log(token);
-      this.authToken = token;
-    } else {
-      this.authToken = undefined;
-    }
+  set localToken(value: string) {
+    this.authToken.next(value); // this will make sure to tell every subscriber about the change.
+    localStorage.setItem('id_token', value);
+  }
+  get localToken(): string {
+    return localStorage.getItem('id_token');
+  }
+  set logStatus(value: string){
+    this.isLoggedIn.next(!jwtHelper.isTokenExpired(value));
   }
   // private handleError<T> (operation = 'operation', result?: T) {
   //   return (error: any): Observable<T> => {
