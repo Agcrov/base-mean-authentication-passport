@@ -3,7 +3,15 @@ var router = express.Router();
 const passport = require('passport');
 const Comment = require('../models/comment');
 
-
+router.get('/',(req, res, next) =>{
+   Comment.getAll((err, comments)=>{
+       if(err){
+           res.json({success: false, message: 'Fail to retrieve all comments', error: err});
+       } else {
+           res.json({success: true, message: 'Comments fetched.',comments: comments});
+       }
+   });
+});
 
 router.post('/add', passport.authenticate('jwt', {session:false}),(req, res, next)=>{
     //Checking that the user authenticated is the same one of the request author

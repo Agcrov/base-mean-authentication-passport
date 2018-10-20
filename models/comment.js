@@ -9,15 +9,25 @@ const CommentSchema = mongoose.Schema({
 
 const Comment = module.exports = mongoose.model('Comment', CommentSchema);
 
-module.exports.addComment = function (comment, callback) {
-    comment.save(callback);
+module.exports.getAll = function (callback){
+    Comment.find({},(err, comments)=>{
+        if (err){console.error(err); throw err;}
+        Comment.populate(comments,{path:'author'});
+        Comment.populate(comments,{path:'replies'}, (err, comments)=>{
+            if(err) throw err;
+            Comment.populate(comments,'replies.author',callback);
+        });
+    });
 };
-
 module.exports.getCommentById = function (id,callback) {
     Comment.findById(id,(err, comment)=>{
         if (err) throw err;
         comment.populate('author',callback);
     });
+};
+
+module.exports.addComment = function (comment, callback) {
+    comment.save(callback);
 };
 module.exports.addReply = function (reply, callback) {
     var id = reply.replies_to;

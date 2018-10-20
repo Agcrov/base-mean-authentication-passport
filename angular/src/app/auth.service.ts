@@ -29,7 +29,9 @@ export class AuthService implements  OnDestroy {
   private url = 'http://localhost:8080/users/';
   private authToken = new Subject<string>();
   isLoggedIn = new Subject<boolean>();
-  private user: User;
+  // private user: User;
+  private user = new Subject<User>();
+
 
   constructor(private httpService: HttpClient) {
     if(this.isLoggedIn){
@@ -39,10 +41,13 @@ export class AuthService implements  OnDestroy {
     }
   }
   ngOnDestroy() {
+    //TODO: find out how to destroy a variable in js or ts.
     this.isLoggedIn.complete();
     this.isLoggedIn = undefined;
     this.authToken.complete();
     this.authToken = undefined;
+    this.user.unsubscribe();
+    this.user.complete();
   }
 
   register(user: User): Observable<RegisterResponse>{
@@ -60,7 +65,8 @@ export class AuthService implements  OnDestroy {
           this.localToken = res.token;
           this.logStatus = res.token;
           localStorage.setItem('user', JSON.stringify(res.user));
-          this.user = res.user;
+          this.user.next(res.user);
+          // this.user =  = res.user;
         } else {
           console.log(res);
         }
@@ -70,7 +76,7 @@ export class AuthService implements  OnDestroy {
 
   logOut(): void{
     this.isLoggedIn.next(false);
-    this.user = null;
+    this.user.next(null);
     localStorage.clear();
   }
   set localToken(value: string) {
