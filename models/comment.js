@@ -1,9 +1,7 @@
 const mongoose = require('mongoose');
-const config = require('../config/database');
-// const Reply = require('./reply');
 
 const CommentSchema = mongoose.Schema({
-    author: { type: mongoose.Schema.Types.ObjectId, ref: 'user', required:true},
+    author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required:true},
     content: { type: String, required: true},
     likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     replies: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Reply' }]
@@ -16,7 +14,10 @@ module.exports.addComment = function (comment, callback) {
 };
 
 module.exports.getCommentById = function (id,callback) {
-    Comment.findById(id, callback);
+    Comment.findById(id,(err, comment)=>{
+        if (err) throw err;
+        comment.populate('author',callback);
+    });
 };
 module.exports.addReply = function (reply, callback) {
     var id = reply.replies_to;
@@ -29,6 +30,16 @@ module.exports.addReply = function (reply, callback) {
 module.exports.getCommentWithReplies = function (id, callback) {
     Comment.getCommentById(id, (err, comment) => {
         if (err) throw err;
-        comment.populate('replies', callback);
+        comment.populate('author').populate('replies', (err, comment) =>{
+            if (err) throw err;
+            comment.populate('replies.author', callback);
+        });
     });
+};
+module.exports.editComment = function (editedComment, callback) {
+    const query = { _id: editedComment._id };
+    Comment.updateOne(query, { content: editedComment.content}, callback);
+};
+module.exports.deleteComment = function (id, callback) {
+    Comment.deleteOne({ _id: id }, callback);
 };
