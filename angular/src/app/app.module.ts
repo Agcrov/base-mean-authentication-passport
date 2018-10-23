@@ -5,6 +5,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { FlashMessagesModule } from 'angular2-flash-messages';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import {AutosizeModule} from "./autosize/autosize.module";
 
 import { MqIfDirective } from './mq-if.directive';
 
@@ -36,7 +37,8 @@ import { CommentsComponent } from './comments/comments.component';
     AppRoutingModule,
     FontAwesomeModule,
     HttpClientModule,
-    FlashMessagesModule.forRoot()
+    FlashMessagesModule.forRoot(),
+    AutosizeModule
   ],
   providers: [],
   bootstrap: [AppComponent]

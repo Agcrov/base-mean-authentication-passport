@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {AuthService} from "../auth.service";
-import {JwtHelperService} from "@auth0/angular-jwt";
-const jwtHelper = new JwtHelperService();
+
 @Component({
   selector: 'app-nav-bar',
   templateUrl: './nav-bar.component.html',
@@ -10,13 +9,7 @@ const jwtHelper = new JwtHelperService();
 export class NavBarComponent implements OnInit {
   isLoggedIn: boolean;
   constructor(private auth: AuthService) {
-    //TODO: find a cleaner way to do this in order to solve the next todo item. I don't want to call the token and less use the jwthelper.
-    let token = this.auth.localToken;
-    if(token){
-      this.isLoggedIn = !jwtHelper.isTokenExpired(token);
-    }else {
-      this.isLoggedIn = false;
-    }
+    this.isLoggedIn = this.auth.validateToken;
   }
 
   ngOnInit() {

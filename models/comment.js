@@ -12,17 +12,17 @@ const Comment = module.exports = mongoose.model('Comment', CommentSchema);
 module.exports.getAll = function (callback){
     Comment.find({},(err, comments)=>{
         if (err){console.error(err); throw err;}
-        Comment.populate(comments,{path:'author'});
+        Comment.populate(comments,{path:'author',select:'-password'});
         Comment.populate(comments,{path:'replies'}, (err, comments)=>{
             if(err) throw err;
-            Comment.populate(comments,'replies.author',callback);
+            Comment.populate(comments,{path:'replies.author',select:'-password'},callback);
         });
     });
 };
 module.exports.getCommentById = function (id,callback) {
     Comment.findById(id,(err, comment)=>{
         if (err) throw err;
-        comment.populate('author',callback);
+        comment.populate('author','-password',callback);
     });
 };
 
@@ -40,9 +40,9 @@ module.exports.addReply = function (reply, callback) {
 module.exports.getCommentWithReplies = function (id, callback) {
     Comment.getCommentById(id, (err, comment) => {
         if (err) throw err;
-        comment.populate('author').populate('replies', (err, comment) =>{
+        comment.populate('author', '-password').populate('replies', (err, comment) =>{
             if (err) throw err;
-            comment.populate('replies.author', callback);
+            comment.populate('replies.author','-password',callback);
         });
     });
 };

@@ -1,38 +1,61 @@
-<div class="comments-container">
+<div *ngIf="comments" class="comments-container">
   <h1>Comments</h1>
-
-  <ul *ngIf="comments" id="comments-list" class="comments-list">
+  <div class="comment-intput-wrapper">
+    <!--<input type="text" class="comment-input" [(ngModel)]="userComment.content">-->
+    <textarea
+      title="Comment"
+      class="comment-input"
+      autosize [minRows]="3"
+      [placeholder]="userLogged ? 'Enter your comment here...':'Please log in to make a comment'"
+      [disabled]="!userLogged"
+      [(ngModel)]="userComment.content"></textarea>
+    <button (click)="onCommentSubmit()" class="btn-comment" [disabled]="!userLogged"><fa-icon [icon]="faPaperPlane"></fa-icon>Comment</button>
+  </div>
+  <ul id="comments-list" class="comments-list">
     <li *ngFor="let comment of comments">
       <div class="comment-main-level">
-        <!-- Avatar -->
         <div class="comment-avatar"><img src="http://i9.photobucket.com/albums/a88/creaticode/avatar_1_zps8e1c80cd.jpg" alt=""></div>
-        <!-- Contenedor del Comentario -->
         <div class="comment-box">
           <div class="comment-head">
-            <h6 class="comment-name by-author"><a href="http://creaticode.com/blog">{{comment.author.username}}</a></h6>
-            <span>hace 20 minutos</span>
-            <fa-icon [icon]="faReply"></fa-icon>
-            <fa-icon [icon]="faHeart"></fa-icon>
+            <h6 class="comment-name"><a href="http://creaticode.com/blog">{{comment.author.username}}</a></h6>
+            <span>{{getTimeFromNow(comment.createdAt)}}</span>
+            <fa-icon [icon]="faReply" (click)="repliesInputs[comment._id] = !repliesInputs[comment._id]"></fa-icon>
+            <fa-icon [icon]="faThumbsUp"></fa-icon>
           </div>
           <div class="comment-content">
             {{comment.content}}
           </div>
+          <div *ngIf="userLogged && currentUser._id == comment.author._id" class="comment-footer">
+            <fa-icon class="delete" [icon]="faTrashAlt"></fa-icon>
+            <fa-icon class="edit" [icon]="faEdit"></fa-icon>
+          </div>
         </div>
+      </div>
+      <div *ngIf="repliesInputs[comment._id]" class="reply-intput-wrapper">
+        <textarea title="reply"
+                  autosize [minRows]="3"
+                  class="reply-input"
+                  [placeholder]="userLogged ? 'Enter your reply here...':'Please log in to make a reply'"
+                  [disabled]="!userLogged"
+                  [(ngModel)]="userReply.content"></textarea>
+        <button (click)="repliesInputs[comment._id] = !repliesInputs[comment._id];onReplySubmit(comment)"
+                [disabled]="!userLogged" class="btn-reply"><fa-icon [icon]="faReply"></fa-icon>Reply</button>
       </div>
       <ul *ngIf="comment.replies" class="comments-list reply-list">
         <li *ngFor="let reply of comment.replies">
-          <!-- Avatar -->
           <div class="comment-avatar"><img src="http://i9.photobucket.com/albums/a88/creaticode/avatar_2_zps7de12f8b.jpg" alt=""></div>
-          <!-- Contenedor del Comentario -->
           <div class="comment-box">
             <div class="comment-head">
               <h6 class="comment-name"><a href="http://creaticode.com/blog">{{reply.author.username}}</a></h6>
-              <span>hace 10 minutos</span>
-              <i class="fa fa-reply"></i>
-              <i class="fa fa-heart"></i>
+              <span>{{getTimeFromNow(reply.createdAt)}}</span>
+              <fa-icon [icon]="faThumbsUp"></fa-icon>
             </div>
             <div class="comment-content">
               {{reply.content}}
+            </div>
+            <div *ngIf="userLogged && currentUser._id == reply.author._id" class="comment-footer">
+              <fa-icon class="delete" [icon]="faTrashAlt"></fa-icon>
+              <fa-icon class="edit" [icon]="faEdit"></fa-icon>
             </div>
           </div>
         </li>
@@ -40,138 +63,3 @@
     </li>
   </ul>
 </div>
-
-
-
-<!--<div class="comments-container">-->
-  <!--<h1>Comments</h1>-->
-
-  <!--<ul id="comments-list" class="comments-list">-->
-    <!--<li>-->
-      <!--<div class="comment-main-level">-->
-        <!--&lt;!&ndash; Avatar &ndash;&gt;-->
-        <!--<div class="comment-avatar"><img src="http://i9.photobucket.com/albums/a88/creaticode/avatar_1_zps8e1c80cd.jpg" alt=""></div>-->
-        <!--&lt;!&ndash; Contenedor del Comentario &ndash;&gt;-->
-        <!--<div class="comment-box">-->
-          <!--<div class="comment-head">-->
-            <!--<h6 class="comment-name by-author"><a href="http://creaticode.com/blog">Agustin Ortiz</a></h6>-->
-            <!--<span>hace 20 minutos</span>-->
-            <!--<fa-icon [icon]="faReply"></fa-icon>-->
-            <!--<fa-icon [icon]="faHeart"></fa-icon>-->
-          <!--</div>-->
-          <!--<div class="comment-content">-->
-            <!--Lorem ipsum dolor sit amet, consectetur adipisicing elit. Velit omnis animi et iure laudantium vitae, praesentium optio, sapiente distinctio illo?-->
-          <!--</div>-->
-        <!--</div>-->
-      <!--</div>-->
-      <!--<ul class="comments-list reply-list">-->
-        <!--<li>-->
-          <!--&lt;!&ndash; Avatar &ndash;&gt;-->
-          <!--<div class="comment-avatar"><img src="http://i9.photobucket.com/albums/a88/creaticode/avatar_2_zps7de12f8b.jpg" alt=""></div>-->
-          <!--&lt;!&ndash; Contenedor del Comentario &ndash;&gt;-->
-          <!--<div class="comment-box">-->
-            <!--<div class="comment-head">-->
-              <!--<h6 class="comment-name"><a href="http://creaticode.com/blog">Lorena Rojero</a></h6>-->
-              <!--<span>hace 10 minutos</span>-->
-              <!--<i class="fa fa-reply"></i>-->
-              <!--<i class="fa fa-heart"></i>-->
-            <!--</div>-->
-            <!--<div class="comment-content">-->
-              <!--Lorem ipsum dolor sit amet, consectetur adipisicing elit. Velit omnis animi et iure laudantium vitae, praesentium optio, sapiente distinctio illo?-->
-            <!--</div>-->
-          <!--</div>-->
-        <!--</li>-->
-
-        <!--<li>-->
-          <!--&lt;!&ndash; Avatar &ndash;&gt;-->
-          <!--<div class="comment-avatar"><img src="http://i9.photobucket.com/albums/a88/creaticode/avatar_1_zps8e1c80cd.jpg" alt=""></div>-->
-          <!--&lt;!&ndash; Contenedor del Comentario &ndash;&gt;-->
-          <!--<div class="comment-box">-->
-            <!--<div class="comment-head">-->
-              <!--<h6 class="comment-name by-author"><a href="http://creaticode.com/blog">Agustin Ortiz</a></h6>-->
-              <!--<span>hace 10 minutos</span>-->
-              <!--<i class="fa fa-reply"></i>-->
-              <!--<i class="fa fa-heart"></i>-->
-            <!--</div>-->
-            <!--<div class="comment-content">-->
-              <!--Lorem ipsum dolor sit amet, consectetur adipisicing elit. Velit omnis animi et iure laudantium vitae, praesentium optio, sapiente distinctio illo?-->
-            <!--</div>-->
-          <!--</div>-->
-        <!--</li>-->
-      <!--</ul>-->
-    <!--</li>-->
-
-    <!--<li>-->
-      <!--<div class="comment-main-level">-->
-        <!--&lt;!&ndash; Avatar &ndash;&gt;-->
-        <!--<div class="comment-avatar"><img src="http://i9.photobucket.com/albums/a88/creaticode/avatar_2_zps7de12f8b.jpg" alt=""></div>-->
-        <!--&lt;!&ndash; Contenedor del Comentario &ndash;&gt;-->
-        <!--<div class="comment-box">-->
-          <!--<div class="comment-head">-->
-            <!--<h6 class="comment-name"><a href="http://creaticode.com/blog">Lorena Rojero</a></h6>-->
-            <!--<span>hace 10 minutos</span>-->
-            <!--<i class="fa fa-reply"></i>-->
-            <!--<i class="fa fa-heart"></i>-->
-          <!--</div>-->
-          <!--<div class="comment-content">-->
-            <!--Lorem ipsum dolor sit amet, consectetur adipisicing elit. Velit omnis animi et iure laudantium vitae, praesentium optio, sapiente distinctio illo?-->
-          <!--</div>-->
-        <!--</div>-->
-      <!--</div>-->
-    <!--</li>-->
-    <!--<li>-->
-      <!--<div class="comment-main-level">-->
-        <!--&lt;!&ndash; Avatar &ndash;&gt;-->
-        <!--<div class="comment-avatar"><img src="http://i9.photobucket.com/albums/a88/creaticode/avatar_2_zps7de12f8b.jpg" alt=""></div>-->
-        <!--&lt;!&ndash; Contenedor del Comentario &ndash;&gt;-->
-        <!--<div class="comment-box">-->
-          <!--<div class="comment-head">-->
-            <!--<h6 class="comment-name"><a href="http://creaticode.com/blog">Lorena Rojero</a></h6>-->
-            <!--<span>hace 10 minutos</span>-->
-            <!--<i class="fa fa-reply"></i>-->
-            <!--<i class="fa fa-heart"></i>-->
-          <!--</div>-->
-          <!--<div class="comment-content">-->
-            <!--Lorem ipsum dolor sit amet, consectetur adipisicing elit. Velit omnis animi et iure laudantium vitae, praesentium optio, sapiente distinctio illo?-->
-          <!--</div>-->
-        <!--</div>-->
-      <!--</div>-->
-    <!--</li>-->
-    <!--<li>-->
-      <!--<div class="comment-main-level">-->
-        <!--&lt;!&ndash; Avatar &ndash;&gt;-->
-        <!--<div class="comment-avatar"><img src="http://i9.photobucket.com/albums/a88/creaticode/avatar_2_zps7de12f8b.jpg" alt=""></div>-->
-        <!--&lt;!&ndash; Contenedor del Comentario &ndash;&gt;-->
-        <!--<div class="comment-box">-->
-          <!--<div class="comment-head">-->
-            <!--<h6 class="comment-name"><a href="http://creaticode.com/blog">Lorena Rojero</a></h6>-->
-            <!--<span>hace 10 minutos</span>-->
-            <!--<i class="fa fa-reply"></i>-->
-            <!--<i class="fa fa-heart"></i>-->
-          <!--</div>-->
-          <!--<div class="comment-content">-->
-            <!--Lorem ipsum dolor sit amet, consectetur adipisicing elit. Velit omnis animi et iure laudantium vitae, praesentium optio, sapiente distinctio illo?-->
-          <!--</div>-->
-        <!--</div>-->
-      <!--</div>-->
-    <!--</li>-->
-    <!--<li>-->
-      <!--<div class="comment-main-level">-->
-        <!--&lt;!&ndash; Avatar &ndash;&gt;-->
-        <!--<div class="comment-avatar"><img src="http://i9.photobucket.com/albums/a88/creaticode/avatar_2_zps7de12f8b.jpg" alt=""></div>-->
-        <!--&lt;!&ndash; Contenedor del Comentario &ndash;&gt;-->
-        <!--<div class="comment-box">-->
-          <!--<div class="comment-head">-->
-            <!--<h6 class="comment-name"><a href="http://creaticode.com/blog">Lorena Rojero</a></h6>-->
-            <!--<span>hace 10 minutos</span>-->
-            <!--<i class="fa fa-reply"></i>-->
-            <!--<i class="fa fa-heart"></i>-->
-          <!--</div>-->
-          <!--<div class="comment-content">-->
-            <!--Lorem ipsum dolor sit amet, consectetur adipisicing elit. Velit omnis animi et iure laudantium vitae, praesentium optio, sapiente distinctio illo?-->
-          <!--</div>-->
-        <!--</div>-->
-      <!--</div>-->
-    <!--</li>-->
-  <!--</ul>-->
-<!--</div>-->

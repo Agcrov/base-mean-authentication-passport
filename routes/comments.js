@@ -4,9 +4,9 @@ const passport = require('passport');
 const Comment = require('../models/comment');
 
 router.get('/',(req, res, next) =>{
-   Comment.getAll((err, comments)=>{
+   Comment.getAll((err,comments)=>{
        if(err){
-           res.json({success: false, message: 'Fail to retrieve all comments', error: err});
+           res.json({success: false, message: 'Error trying to fetch comments.',error: err});
        } else {
            res.json({success: true, message: 'Comments fetched.',comments: comments});
        }
