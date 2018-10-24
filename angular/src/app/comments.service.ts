@@ -50,6 +50,31 @@ export class CommentsService {
       console.log('comment undefined')
     }
   }
+  deleteComment(userId: string, commentId:string): Observable<Response>{
+    if (userId && commentId){
+        let httpHeaders = new HttpHeaders({
+          'Content-Type': 'application/json',
+          'Authorization': this.authService.localToken
+        });
+        let options = {
+          headers: httpHeaders
+        };
+        return this.httpService.delete<Response>(`${this.urlComments}delete/${commentId}?authorId=${userId}`,options);
+    } else console.log('bad request');
+  }
+  deleteReply(userId: string, replyId:string): Observable<Response>{
+    if (userId && replyId){
+      let httpHeaders = new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': this.authService.localToken
+      });
+      let options = {
+        headers: httpHeaders
+      };
+      return this.httpService.delete<Response>(`${this.urlReplies}delete/${replyId}?authorId=${userId}`,options);
+    } else console.log('bad request');
+  }
+
   getComments(): Observable<Comments>{
     return this.httpService.get<Comments>(this.urlComments ,httpOptions);
   }

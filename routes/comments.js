@@ -2,13 +2,14 @@ var express = require('express');
 var router = express.Router();
 const passport = require('passport');
 const Comment = require('../models/comment');
+const Reply = require('../models/reply');
 
 router.get('/',(req, res, next) =>{
-   Comment.getAll((err,comments)=>{
-       if(err){
-           res.json({success: false, message: 'Error trying to fetch comments.',error: err});
-       } else {
+   Comment.getAll((comments,err)=>{
+       if(comments){
            res.json({success: true, message: 'Comments fetched.',comments: comments});
+       } else {
+           res.json({success: false, message: 'Error trying to fetch comments.',error: err});
        }
    });
 });
@@ -43,16 +44,18 @@ router.get('/:id',(req, res, next)=>{
     let replies = req.query.replies;
     if (id && replies){
         if (replies === 'true'){
-            Comment.getCommentWithReplies(id, (err, comment)=>{
-                if (err){
+            Comment.getCommentWithReplies(id, (comment, err)=>{
+                console.log(comment,err);
+                if (comment === null){
                     res.json({success: false, message: `Fail trying to fetch comment and the corresponding replies.`, error: err});
                 } else {
                     res.json({success: true, message:`Comment w/replies fetched.`, comment: comment});
                 }
             });
         } else {
-            Comment.getCommentById(id,(err, comment)=>{
-                if (err){
+            Comment.getCommentById(id,(comment, err)=>{
+                console.log(comment,err);
+                if (comment === null){
                     res.json({success: false, message: `Fail trying to fetch comment.`, error: err});
                 } else {
                     res.json({success: true, message:`Comment fetched.`, comment: comment});
@@ -91,24 +94,55 @@ router.put('/edit',passport.authenticate('jwt', {session:false}),(req, res, next
         res.sendStatus(401);
     }
 });
-router.delete('/delete', passport.authenticate('jwt', {session:false}), (req, res, next)=>{
-    //Checking that the user authenticated is the same one of the request author
-    if (req.user._id.toString() === req.body.author) {
-        //Checking body parameters are defined
-        if (req.body._id) {
-            Comment.deleteComment(req.body._id, (err, response) => {
-                if (err){
-                    res.json({success: false, message: `Fail trying to delete comment.`, error: err});
-                } else {
-                    console.log(response);
-                    if (response.n === 0){
-                        res.sendStatus(404);
-                    } else {
-                        res.json({success: true, message:`Comment deleted.`});
+router.delete('/delete/:id', passport.authenticate('jwt', {session:false}), (req, res, next)=>{
+    let id = req.params.id;
+    let authorId = req.query.authorId;
+    //Checking body parameters are defined
+    if (id && authorId){
+        //Checking that the user authenticated is the same one of the request author
+        if (req.user._id.toString() === authorId) {
+            Comment.getCommentWithReplies(id, (comment, err) =>{
+                if (err) throw err;
+                if (comment !== null){
+                    if (comment.replies.length > 0){
+                        comment.replies.forEach(reply =>{
+                            Reply.deleteReply(reply._id, (err, response)=>{
+                                if (err){
+                                    res.json({succes: false, message:`Fail trying to delete reply.`,error:err});
+                                } else {
+                                    if (response.n === 0){
+                                        res.sendStatus(404);
+                                    }
+                                }
+                            });
+                        });
+                        Comment.deleteComment(id, (err, response) => {
+                            if (err){
+                                res.json({success: false, message: `Fail trying to delete comment.`, error: err});
+                            } else {
+                                if (response.n === 0){
+                                    res.sendStatus(404);
+                                } else {
+                                    res.json({success: true, message:`Comment deleted.`});
+                                }
+                            }
+                        })
+                    }else {
+                        Comment.deleteComment(id, (err, response) => {
+                            if (err){
+                                res.json({success: false, message: `Fail trying to delete comment.`, error: err});
+                            } else {
+                                if (response.n === 0){
+                                    res.sendStatus(404);
+                                } else {
+                                    res.json({success: true, message:`Comment deleted.`});
+                                }
+                            }
+                        })
                     }
-                }
-            })
-        } else res.sendStatus(400);
-    }else res.sendStatus(401);
+                } else res.sendStatus(404);
+            });
+        }else res.sendStatus(401);
+    } else res.sendStatus(400)
 });
 module.exports = router;

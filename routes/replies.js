@@ -52,25 +52,29 @@ router.put('/edit',passport.authenticate('jwt', {session:false}),(req, res, next
         res.sendStatus(401);
     }
 });
-router.delete('/delete', passport.authenticate('jwt', {session:false}), (req, res, next)=>{
-    //Checking that the user authenticated is the same one of the request author
-    if (req.user._id.toString() === req.body.author) {
-        //Checking body parameters are defined
-        if (req.body._id) {
-            Reply.deleteComment(req.body._id, (err, response) => {
-                if (err){
-                    res.json({success: false, message: `Fail trying to delete reply.`, error: err});
-                } else {
-                    console.log(response);
-                    if (response.n === 0){
-                        res.sendStatus(404);
+router.delete('/delete/:id', passport.authenticate('jwt', {session:false}), (req, res, next)=>{
+    let id = req.params.id;
+    let authorId = req.query.authorId;
+    if (id && authorId){
+        //Checking that the user authenticated is the same one of the request author
+        if (req.user._id.toString() === authorId) {
+            //Checking body parameters are defined
+            if (id) {
+                //TODO: delete reply id from comment replies, find comment that replies to and eliminate from replies and save. do it on comment model.
+                Reply.deleteReply(id, (err, response) => {
+                    if (err){
+                        res.json({success: false, message: `Fail trying to delete reply.`, error: err});
                     } else {
-                        res.json({success: true, message:`Reply deleted.`});
+                        if (response.n === 0){
+                            res.sendStatus(404);
+                        } else {
+                            res.json({success: true, message:`Reply deleted.`});
+                        }
                     }
-                }
-            })
-        } else res.sendStatus(400);
-    }else res.sendStatus(401);
+                })
+            } else res.sendStatus(400);
+        }else res.sendStatus(401);
+    } else res.sendStatus(400);
 });
 
 module.exports = router;

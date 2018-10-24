@@ -21,6 +21,6 @@ module.exports.editReply = function (editedReply, callback) {
     const query = { _id: editedReply._id };
     Reply.updateOne(query, { content: editedReply.content}, callback);
 };
-module.exports.deleteComment = function (id, callback) {
+module.exports.deleteReply = function (id, callback) {
     Reply.deleteOne({ _id: id }, callback);
 };

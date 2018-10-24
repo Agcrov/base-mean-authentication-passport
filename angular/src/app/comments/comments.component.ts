@@ -54,6 +54,7 @@ export class CommentsComponent implements OnInit {
       if (this.userComment.author && this.userComment.content){
         this.commentsService.addComment(this.userComment).subscribe(res=>{
           if(res.success){
+            this.userComment = new Comment();
             //  reload the comments
             this.commentsService.getComments().subscribe( res => {
               this.comments = res.comments;
@@ -64,14 +65,12 @@ export class CommentsComponent implements OnInit {
     } else console.log('Log in please');
   }
   onReplySubmit(comment: Comment){
-    console.log('entra');
     if (this.userLogged){
-      console.log('user logged');
-      console.log(this.userReply);
       this.userReply.author = this.currentUser;
       if (this.userReply.author && this.userReply.content){
         this.commentsService.addReply(this.userReply, comment).subscribe(res=>{
           if(res.success){
+            this.userReply = new Reply();
             //  reload the comments
             this.commentsService.getComments().subscribe( res => {
               this.comments = res.comments;
@@ -80,6 +79,28 @@ export class CommentsComponent implements OnInit {
         });
       }
     } else console.log('Log in please');
+  }
+  onCommentDelete(comment: Comment){
+    if (comment._id){
+      this.commentsService.deleteComment(this.currentUser._id,comment._id).subscribe(res =>{
+        if (res.success){
+          this.commentsService.getComments().subscribe( res => {
+            this.comments = res.comments;
+          });
+        } else console.log('Error while deleting');
+      });
+    } else console.log('Comment undefined');
+  }
+  onReplyDelete(reply: Reply){
+    if (reply._id){
+      this.commentsService.deleteReply(this.currentUser._id,reply._id).subscribe(res =>{
+        if (res.success){
+          this.commentsService.getComments().subscribe( res => {
+            this.comments = res.comments;
+          });
+        } else console.log('Error while deleting');
+      });
+    } else console.log('Reply undefined');
   }
   getTimeFromNow(date: string): string {
     let commentDate = moment(date);
