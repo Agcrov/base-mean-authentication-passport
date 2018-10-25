@@ -11,6 +11,9 @@ const ReplySchema = mongoose.Schema({
 
 const Reply = module.exports = mongoose.model('Reply', ReplySchema);
 
+module.exports.getReplyById = function (id, callback){
+    Reply.findById(id, callback);
+};
 module.exports.addReply = function (reply, callback) {
     Comment.addReply(reply, (err)=>{
         if (err) throw err;

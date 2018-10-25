@@ -13,7 +13,6 @@ router.get('/',(req, res, next) =>{
        }
    });
 });
-
 router.post('/add', passport.authenticate('jwt', {session:false}),(req, res, next)=>{
     //Checking that the user authenticated is the same one of the request author
     if (req.user._id.toString() === req.body.author){
@@ -38,7 +37,6 @@ router.post('/add', passport.authenticate('jwt', {session:false}),(req, res, nex
     }
 
 });
-
 router.get('/:id',(req, res, next)=>{
     let id = req.params.id;
     let replies = req.query.replies;
@@ -108,7 +106,7 @@ router.delete('/delete/:id', passport.authenticate('jwt', {session:false}), (req
                         comment.replies.forEach(reply =>{
                             Reply.deleteReply(reply._id, (err, response)=>{
                                 if (err){
-                                    res.json({succes: false, message:`Fail trying to delete reply.`,error:err});
+                                    res.json({success: false, message:`Fail trying to delete reply.`,error:err});
                                 } else {
                                     if (response.n === 0){
                                         res.sendStatus(404);

@@ -33,6 +33,15 @@ module.exports.addReply = function (reply, callback) {
         comment.save(callback);
     });
 };
+module.exports.removeReply = function (reply, callback) {
+    const id = reply.replies_to;
+    Comment.findById(id, (err, comment) =>{
+        if (err) throw err;
+        const index = comment.replies.indexOf(reply._id.toString());
+        comment.replies.splice(index,1);
+        comment.save(callback);
+    });
+};
 module.exports.getCommentWithReplies = function (id, callback) {
     Comment.findById(id).populate('author','-password')
         .populate({path:'replies',populate:{path:'author',select:'-password'}})
