@@ -22,7 +22,10 @@ module.exports.addReply = function (reply, callback) {
 };
 module.exports.editReply = function (editedReply, callback) {
     const query = { _id: editedReply._id };
-    Reply.updateOne(query, { content: editedReply.content}, callback);
+    let reply = {};
+    if (editedReply.content) reply.content = editedReply.content;
+    if (editedReply.likes) reply.likes = editedReply.likes;
+    Reply.updateOne(query, reply, callback);
 };
 module.exports.deleteReply = function (id, callback) {
     Reply.deleteOne({ _id: id }, callback);

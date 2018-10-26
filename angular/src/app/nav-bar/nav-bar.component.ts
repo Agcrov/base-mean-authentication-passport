@@ -22,7 +22,6 @@ export class NavBarComponent implements OnInit {
 
   logout():void {
     this.auth.logOut();
-    console.log('Local storage cleaned up');
   }
 
 }

@@ -5,7 +5,7 @@ export class Reply {
   _id: string;
   author: User;
   content: string;
-  likes: User[];
+  likes: string[];
   replies_to: Comment;
   createdAt: string;
   updatedAt: string;

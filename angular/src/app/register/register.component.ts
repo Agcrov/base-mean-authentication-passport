@@ -32,7 +32,7 @@ export class RegisterComponent implements OnInit {
         this.authService.register(this.user).subscribe(res => {
           if(res.success){
             this.flashService.show(`Success! Welcome ${this.user.username}.`, { cssClass: 'flash-minimal-success' , timeout: 3000 });
-            this.router.navigate(['/login']);
+            this.router.navigate(['/login']).catch(err => console.error(err));
           }else {
             this.flashService.show(`Error! ${res.message}`, { cssClass: 'flash-minimal-error' , timeout: 3000 });
           }

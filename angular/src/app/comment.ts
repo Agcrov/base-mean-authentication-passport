@@ -6,7 +6,7 @@ export class Comment {
   _id: string;
   author: User;
   content: string;
-  likes: User[];
+  likes: string[];
   replies: Reply[];
   createdAt: string;
   updatedAt: string;

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {faReply, faEdit, faPaperPlane} from "@fortawesome/free-solid-svg-icons";
+import {faReply, faEdit, faPaperPlane, faTimes, faThumbsUp as fasThumbsUp} from "@fortawesome/free-solid-svg-icons";
 import { faThumbsUp, faTrashAlt } from "@fortawesome/free-regular-svg-icons"
 import {CommentsService} from "../comments.service";
 import {Comment} from "../comment";
@@ -21,13 +21,24 @@ export class CommentsComponent implements OnInit {
   userLogged: boolean;
   currentUser = new User();
   repliesInputs = {};
+  repliesEditInputs = {};
+  commentEditInputs = {};
 
   faPaperPlane =faPaperPlane;
   faReply = faReply;
   faEdit = faEdit;
   faThumbsUp = faThumbsUp;
+  fasThumbsUp = fasThumbsUp;
   faTrashAlt = faTrashAlt;
+  faTimes = faTimes;
 
+  clearArrays(){
+    this.repliesInputs = {};
+    this.commentEditInputs = {};
+    this.repliesEditInputs = {};
+    this.userComment = new Comment();
+    this.userReply = new Reply();
+  }
   constructor(private commentsService: CommentsService, private authService: AuthService) {
     this.userLogged = this.authService.validateToken;
     if (this.userLogged){
@@ -48,6 +59,28 @@ export class CommentsComponent implements OnInit {
       this.comments = res.comments;
     });
   }
+  getTimeFromNow(date: string): string {
+    let commentDate = moment(date);
+    let time = commentDate.fromNow();
+    if (time.indexOf('day')!=-1) {
+      return commentDate.format('DD-MM-YYYY');
+    }else {
+      return time;
+    }
+    // let time = commentDate.diff(moment.now(),'hours');
+    // if (-time >= 24 ){
+    //   return commentDate.format('DD-MM-YYYY');
+    // } else {
+    //   return commentDate.fromNow();
+    // }
+    // // let time = commentDate.diff(moment.now(),'hours');
+    // if (-time >= 24 ){
+    //   return commentDate.format('DD-MM-YYYY');
+    // } else {
+    //   return commentDate.fromNow();
+    // }
+  }
+
   onCommentSubmit(){
     if (this.userLogged){
       this.userComment.author = this.currentUser;
@@ -80,6 +113,30 @@ export class CommentsComponent implements OnInit {
       }
     } else console.log('Log in please');
   }
+  onCommentEdit(comment: Comment){
+    if (this.userLogged) {
+      this.commentsService.editComment(comment).subscribe(res =>{
+        if(res.success){
+          //  reload the comments
+          this.commentsService.getComments().subscribe( res => {
+            this.comments = res.comments;
+          });
+        }else console.log('comment not edited');
+      });
+    }
+  }
+  onReplyEdit(reply: Reply){
+    if (this.userLogged) {
+      this.commentsService.editReply(reply).subscribe(res =>{
+        if(res.success){
+          //  reload the comments
+          this.commentsService.getComments().subscribe( res => {
+            this.comments = res.comments;
+          });
+        }else console.log('reply not edited');
+      });
+    }
+  }
   onCommentDelete(comment: Comment){
     if (comment._id){
       this.commentsService.deleteComment(this.currentUser._id,comment._id).subscribe(res =>{
@@ -102,25 +159,56 @@ export class CommentsComponent implements OnInit {
       });
     } else console.log('Reply undefined');
   }
-  getTimeFromNow(date: string): string {
-    let commentDate = moment(date);
-    let time = commentDate.fromNow();
-    if (time.indexOf('day')!=-1) {
-        return commentDate.format('DD-MM-YYYY');
-    }else {
-      return time;
+  addCommentLike(comment: Comment){
+    let currentUserId = this.currentUser._id.toString();
+    if(comment.likes.indexOf(currentUserId)==-1){
+      comment.likes.push(currentUserId);
+      this.commentsService.editComment(comment).subscribe(res =>{
+        if (res.success){
+          this.commentsService.getComments().subscribe( res => {
+            this.comments = res.comments;
+          });
+        }
+      })
     }
-    // let time = commentDate.diff(moment.now(),'hours');
-    // if (-time >= 24 ){
-    //   return commentDate.format('DD-MM-YYYY');
-    // } else {
-    //   return commentDate.fromNow();
-    // }
-    // // let time = commentDate.diff(moment.now(),'hours');
-    // if (-time >= 24 ){
-    //   return commentDate.format('DD-MM-YYYY');
-    // } else {
-    //   return commentDate.fromNow();
-    // }
+  }
+  removeCommentLike(comment: Comment){
+    let userIdIndex = comment.likes.indexOf(this.currentUser._id.toString());
+    if(userIdIndex!==-1){
+      comment.likes.splice(userIdIndex, 1);
+      this.commentsService.editComment(comment).subscribe(res =>{
+        if (res.success){
+          this.commentsService.getComments().subscribe( res => {
+            this.comments = res.comments;
+          });
+        }
+      })
+    }
+  }
+  addReplyLike(reply: Reply){
+    let currentUserId = this.currentUser._id.toString();
+    if(reply.likes.indexOf(currentUserId)==-1){
+      reply.likes.push(currentUserId);
+      this.commentsService.editReply(reply).subscribe(res =>{
+        if (res.success){
+          this.commentsService.getComments().subscribe( res => {
+            this.comments = res.comments;
+          });
+        }
+      })
+    }
+  }
+  removeReplyLike(reply: Reply){
+    let userIdIndex = reply.likes.indexOf(this.currentUser._id.toString());
+    if(userIdIndex!==-1){
+      reply.likes.splice(userIdIndex,1);
+      this.commentsService.editReply(reply).subscribe(res =>{
+        if (res.success){
+          this.commentsService.getComments().subscribe( res => {
+            this.comments = res.comments;
+          });
+        }
+      })
+    }
   }
 }

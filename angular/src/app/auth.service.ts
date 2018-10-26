@@ -1,8 +1,8 @@
 import { Injectable, OnDestroy } from '@angular/core';
 
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { catchError, map, tap } from 'rxjs/operators';
-import {Observable, of, Subject} from 'rxjs';
+import { tap } from 'rxjs/operators';
+import {Observable, Subject} from 'rxjs';
 import {User} from './user';
 import { JwtHelperService } from "@auth0/angular-jwt";
 
@@ -19,6 +19,7 @@ interface RegisterResponse {
 interface AuthenticateResponse {
   success: boolean,
   token: string,
+  message: string;
   user: User;
 }
 

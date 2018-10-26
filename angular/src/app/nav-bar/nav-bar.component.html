@@ -9,10 +9,10 @@
     </g>
   </svg>
   <ul class="nav-item-list">
-    <li class="nav-item">Home</li>
+    <li class="nav-item"><a routerLink="/home">Home</a></li>
     <li class="nav-item">About</li>
-    <li class="nav-item">Profile</li>
+    <li class="nav-item" *ngIf="!isLoggedIn"><a routerLink="/register">Register</a></li>
     <li class="nav-item" *ngIf="!isLoggedIn"><a routerLink="/login">Log in</a></li>
-    <li class="nav-item" *ngIf="isLoggedIn" (click)="logout()">Logout</li>
+    <li class="nav-item" *ngIf="isLoggedIn" (click)="logout()">Log out</li>
   </ul>
 </nav>

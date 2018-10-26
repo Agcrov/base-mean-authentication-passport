@@ -27,15 +27,10 @@ router.post('/add', passport.authenticate('jwt', {session:false}),(req, res, nex
 });
 router.put('/edit',passport.authenticate('jwt', {session:false}),(req, res, next)=>{
     //Checking that the user authenticated is the same one of the request author
-    if (req.user._id.toString() === req.body.author) {
+    // if (req.user._id.toString() === req.body.author._id) {
         //Checking body parameters are defined
-        if (req.body.author && req.body.content ) {
-            let reply = new Reply({
-                _id: req.body._id,
-                author: req.body.author,
-                content: req.body.content
-            });
-            Reply.editReply(reply, (err, response)=>{
+        if (req.body.likes && req.body.content ) {
+            Reply.editReply(req.body, (err, response)=>{
                 if (err){
                     res.json({success: false, message: `Fail trying to edit reply.`, error: err});
                 } else {
@@ -49,9 +44,9 @@ router.put('/edit',passport.authenticate('jwt', {session:false}),(req, res, next
         }else {
             res.sendStatus(400);
         }
-    }else {
-        res.sendStatus(401);
-    }
+    // }else {
+    //     res.sendStatus(401);
+    // }
 });
 router.delete('/delete/:id', passport.authenticate('jwt', {session:false}), (req, res, next)=>{
     let id = req.params.id;

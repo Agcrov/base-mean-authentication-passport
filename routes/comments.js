@@ -66,15 +66,10 @@ router.get('/:id',(req, res, next)=>{
 });
 router.put('/edit',passport.authenticate('jwt', {session:false}),(req, res, next)=>{
     //Checking that the user authenticated is the same one of the request author
-    if (req.user._id.toString() === req.body.comment.author) {
+    // if (req.user._id.toString() === req.body.comment.author._id) {
         //Checking body parameters are defined
-        if (req.body.comment.author && req.body.comment.content ) {
-            let comment = new Comment({
-                _id: req.body.comment._id,
-                author: req.body.comment.author,
-                content: req.body.comment.content
-            });
-            Comment.editComment(comment, (err, response)=>{
+        if (req.body.comment.likes && req.body.comment.content ) {
+            Comment.editComment(req.body.comment, (err, response)=>{
                 if (err){
                     res.json({success: false, message: `Fail trying to edit comment.`, error: err});
                 } else {
@@ -88,9 +83,9 @@ router.put('/edit',passport.authenticate('jwt', {session:false}),(req, res, next
         }else {
             res.sendStatus(400);
         }
-    }else {
-        res.sendStatus(401);
-    }
+    // }else {
+    //     res.sendStatus(401);
+    // }
 });
 router.delete('/delete/:id', passport.authenticate('jwt', {session:false}), (req, res, next)=>{
     let id = req.params.id;

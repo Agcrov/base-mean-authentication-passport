@@ -59,8 +59,11 @@ module.exports.getCommentWithReplies = function (id, callback) {
     // });
 };
 module.exports.editComment = function (editedComment, callback) {
+    let comment = {};
+    if (editedComment.content) comment.content = editedComment.content;
+    if (editedComment.likes) comment.likes = editedComment.likes;
     const query = { _id: editedComment._id };
-    Comment.updateOne(query, { content: editedComment.content}, callback);
+    Comment.updateOne(query, comment, callback);
 };
 module.exports.deleteComment = function (id, callback) {
     Comment.deleteOne({ _id: id }, callback);

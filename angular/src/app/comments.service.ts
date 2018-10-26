@@ -32,6 +32,10 @@ export class CommentsService {
 
   constructor(private authService: AuthService, private  httpService: HttpClient) { }
 
+  getComments(): Observable<Comments>{
+    return this.httpService.get<Comments>(this.urlComments ,httpOptions);
+  }
+
   addComment(comment: Comment): Observable<PostComment> {
     if (comment){
       let body = {
@@ -50,6 +54,26 @@ export class CommentsService {
       console.log('comment undefined')
     }
   }
+  addReply(reply: Reply, comment: Comment): Observable<PostReply> {
+    if (comment && reply){
+      let body = {
+        author:reply.author._id,
+        content:reply.content,
+        replies_to:comment._id
+      };
+      let httpHeaders = new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': this.authService.localToken
+      });
+      let options = {
+        headers: httpHeaders
+      };
+      return this.httpService.post<PostReply>(`${this.urlReplies}add`,body,options);
+    } else {
+      console.log('reply undefined')
+    }
+  }
+
   deleteComment(userId: string, commentId:string): Observable<Response>{
     if (userId && commentId){
         let httpHeaders = new HttpHeaders({
@@ -75,16 +99,8 @@ export class CommentsService {
     } else console.log('bad request');
   }
 
-  getComments(): Observable<Comments>{
-    return this.httpService.get<Comments>(this.urlComments ,httpOptions);
-  }
-  addReply(reply: Reply, comment: Comment): Observable<PostReply> {
-    if (comment && reply){
-      let body = {
-        author:reply.author._id,
-        content:reply.content,
-        replies_to:comment._id
-      };
+  editComment(comment: Comment): Observable<Response>{
+    if (comment){
       let httpHeaders = new HttpHeaders({
         'Content-Type': 'application/json',
         'Authorization': this.authService.localToken
@@ -92,12 +108,21 @@ export class CommentsService {
       let options = {
         headers: httpHeaders
       };
-      return this.httpService.post<PostReply>(`${this.urlReplies}add`,body,options);
-    } else {
-      console.log('reply undefined')
-    }
+      return this.httpService.put<Response>(`${this.urlComments}edit`,{comment},options);
+    } else console.log('bad request');
   }
-
+  editReply(reply: Reply): Observable<Response>{
+    if (reply){
+      let httpHeaders = new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': this.authService.localToken
+      });
+      let options = {
+        headers: httpHeaders
+      };
+      return this.httpService.put<Response>(`${this.urlReplies}edit`,reply,options);
+    } else console.log('bad request');
+  }
 }
 
 
